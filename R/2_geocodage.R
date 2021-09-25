@@ -1,7 +1,7 @@
 library(tidyverse)
 library(tidygeocoder)
 
-etranger <- readRDS("donnees/etranger2.RDS")
+etranger <- readRDS("donnees/etranger.RDS")
 
 # Liste des pays pour lesquels on veut g?ocoder les communes
 liste_pays <- c("ISLANDE","ESPAGNE","SUISSE","TURQUIE","HONGRIE","GRECE","PORTUGAL",

@@ -2,7 +2,7 @@ library(sf)
 library(tidyverse)
 library(stringi)
 
-# Cr?ation de la base des lieux de naissance
+# Creation de la base des lieux de naissance
 origine <- function(AN){
   annee <- read.csv2(paste0("donnees/site_insee/deces_",AN,".csv")) %>% 
     select(datenaiss,commnaiss,paysnaiss) 
@@ -11,7 +11,7 @@ origine <- function(AN){
 liste <- c(as.character(rep(1970:2020)))
 base_orig <- map_df(liste,origine)
 
-# Naissances ? l'?tranger
+# Naissances a l'etranger
 etranger <- base_orig %>% 
   mutate(PAYSOK1=str_replace_all(paysnaiss,"[:punct:]|[:space:]|[:digit:]"," "),#|-
          COMMOK=str_replace_all(commnaiss,"[:punct:]|[:digit:]"," "),#[:space:]||-
@@ -63,7 +63,7 @@ etranger <- etranger %>%
   count(PAYSOK, COMMOK) %>% 
   arrange(desc(n))
 
-saveRDS(etranger,"donnees/etranger2.RDS")
+saveRDS(etranger,"donnees/etranger.RDS")
 rm("base_orig")
 
 

@@ -4,7 +4,7 @@ library(extrafont)
 loadfonts(device = "win")
 
 # Fond Eurostat
-fond <- st_read("donnees/CNTR_RG_10M_2020_3035.shp")
+fond <- st_read("donnees/CNTR_RG_10M_2020_3035.shp") # remplacer par giscoR
 
 # Pour faire le lien entre le nom du pays Insee et le nom Eurostat
 lien_id <- read.csv("donnees/libelle_pays.csv")

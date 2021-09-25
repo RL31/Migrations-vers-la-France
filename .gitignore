@@ -1,4 +1,6 @@
 R/00_setwd.R
+donnees/site_insee/
+*.RDS
 
 
 # History files
