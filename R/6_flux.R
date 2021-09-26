@@ -1,9 +1,8 @@
 library(tidyverse)
 library(stringi)
 library(sf)
-library(tidyverse)
 
-# Cr?ation de la base des lieux de naissance
+# Création de la base des lieux de naissance
 origine <- function(AN){
   annee <- read.csv2(paste0("donnees/deces-",AN,".csv"))  %>% 
     select(datenaiss,commnaiss,paysnaiss,datedeces,lieudeces) %>% 

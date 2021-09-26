@@ -1,3 +1,9 @@
+
+
+############## 2e code ok
+############### à regrouper dans 3
+
+
 library(tidyverse)
 library(sf)
 #library(stringi)
@@ -5,33 +11,6 @@ library(sf)
 library(plotly)
 library(extrafont)
 loadfonts(device = "win")
-
-# carte par pays, centr?e Europe
-liste_pays <- c("ISLANDE","ESPAGNE","SUISSE","TURQUIE","HONGRIE","GRECE","PORTUGAL",
-                "POLOGNE","ALLEMAGNE","ITALIE","BELGIQUE","AUTRICHE",
-                "ROUMANIE","RUSSIE","LUXEMBOURG","BULGARIE",
-                "SERBIE","ARMENIE","SLOVAQUIE","DANEMARK","IRLANDE","SUEDE","LETTONIE","NORVEGE",
-                "FINLANDE","MONTENEGRO","ALBANIE",
-                "UKRAINE","CROATIE","LITUANIE","ANDORRE","MACEDOINE","CHYPRE","ESTONIE","MOLDAVIE",
-                "MALTE","SLOVENIE","KOSOVO", "SAINTMARIN","BOSNIEHERZEGOVINE","ROYAUMEUNI","PAYSBAS",
-                "REPUBLIQUETCHEQUE","BIELORUSSIE","ALGERIE","TUNISIE","MAROC"
-)
-
-europe <- function(PAYS){
-  print(PAYS)
-  base_pays <- readRDS(paste0("donnees/osm_",PAYS,"2.RDS")) %>% 
-    filter(!is.na(display_name)) %>% 
-    count(long,lat,display_name,PAYSOK,COMMOK,wt=n) %>% 
-    st_as_sf(coords=c("long","lat"),crs=4326) %>% 
-    st_transform(3035) %>% 
-    mutate(y=unlist(map(.$geometry,2)),
-           x=unlist(map(.$geometry,1)),
-           PAYSOK=PAYS) #%>% 
-    #select(x,y,n,PAYSOK,display_name)
-}
-base_complete <- map_dfr(liste_pays,europe)
-
-saveRDS(base_complete,"sorties/base_complete.RDS")
 
 fond <- st_read("donnees/CNTR_RG_10M_2020_3035.shp")
 limites_europe <- fond %>% filter(NAME_ENGL %in% c("Iceland","Norway","Greece")) %>% st_bbox()

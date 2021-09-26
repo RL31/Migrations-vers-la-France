@@ -3,17 +3,50 @@ library(sf)
 library(extrafont)
 loadfonts(device = "win")
 
+
+
+
+
+# Création d'une base regroupant tous les pays
+# 
+liste_pays <- c("ISLANDE","ESPAGNE","SUISSE","TURQUIE","HONGRIE","GRECE","PORTUGAL",
+                "POLOGNE","ALLEMAGNE","ITALIE","BELGIQUE","AUTRICHE",
+                "ROUMANIE","RUSSIE","LUXEMBOURG","BULGARIE",
+                "SERBIE","ARMENIE","SLOVAQUIE","DANEMARK","IRLANDE","SUEDE","LETTONIE","NORVEGE",
+                "FINLANDE","MONTENEGRO","ALBANIE",
+                "UKRAINE","CROATIE","LITUANIE","ANDORRE","MACEDOINE","CHYPRE","ESTONIE","MOLDAVIE",
+                "MALTE","SLOVENIE","KOSOVO", "SAINTMARIN","BOSNIEHERZEGOVINE","ROYAUMEUNI","PAYSBAS",
+                "REPUBLIQUETCHEQUE","BIELORUSSIE","ALGERIE","TUNISIE","MAROC"
+)
+
+europe <- function(PAYS){
+  print(PAYS)
+  base_pays <- readRDS(paste0("donnees/osm_",PAYS,"2.RDS")) %>% 
+    filter(!is.na(display_name)) %>% 
+    count(long,lat,display_name,PAYSOK,COMMOK,wt=n) %>% 
+    st_as_sf(coords=c("long","lat"),crs=4326) %>% 
+    st_transform(3035) %>% 
+    mutate(y=unlist(map(.$geometry,2)),
+           x=unlist(map(.$geometry,1)),
+           PAYSOK=PAYS) #%>% 
+  #select(x,y,n,PAYSOK,display_name)
+}
+base_complete <- map_dfr(liste_pays,europe)
+
+
+#saveRDS(base_complete,"sorties/base_complete.RDS")
+
+
 # Fond Eurostat
-fond <- st_read("donnees/CNTR_RG_10M_2020_3035.shp") # remplacer par giscoR
+fond <- st_read("donnees/CNTR_RG_10M_2020_3035.shp") # remplacer par giscoR ?
 
 # Pour faire le lien entre le nom du pays Insee et le nom Eurostat
 lien_id <- read.csv("donnees/libelle_pays.csv")
 
-# Fonction qui traite chaque pays un ? un
+# Fonction qui traite chaque pays un à un
 carte_pays2 <- function(PAYS){
-  #PAYS <- "ALGERIE"
-  
-  # d?finition des limites de la zone ? cartographier
+
+    # définition des limites de la zone à cartographier
   ID <- lien_id %>% mutate(PAYSOK=trimws(PAYSOK,"right") ) %>% filter(PAYSOK==PAYS) %>% select(CNTR_ID) %>% pull() %>% as.character()
   print(ID)
   limites <- fond %>% filter(CNTR_ID==ID) %>% st_bbox()
@@ -33,16 +66,19 @@ carte_pays2 <- function(PAYS){
   }
   
   # Virer ?a et utiliser base_comlete
-  base_pays <- readRDS(paste0("donnees/osm_",PAYS,"2.RDS")) %>% 
-    filter(!is.na(display_name)) %>% 
-    count(long,lat,display_name,wt=n) %>% 
-    st_as_sf(coords=c("long","lat"),crs=4326) %>% 
-    st_transform(3035) %>% 
-    mutate(y=unlist(map(.$geometry,2)),
-           x=unlist(map(.$geometry,1))) %>% 
-    select(x,y,n,display_name)
+  # base_pays <- readRDS(paste0("donnees/osm_",PAYS,"2.RDS")) %>% 
+  #   filter(!is.na(display_name)) %>% 
+  #   count(long,lat,display_name,wt=n) %>% 
+  #   st_as_sf(coords=c("long","lat"),crs=4326) %>% 
+  #   st_transform(3035) %>% 
+  #   mutate(y=unlist(map(.$geometry,2)),
+  #          x=unlist(map(.$geometry,1))) %>% 
+  #   select(x,y,n,display_name)
+  # 
+  base_pays <- base_complete %>% 
+    filter(PAYSOK==PAYS)
   
-  # Calcul du taux de r?ussite du g?ocodage
+  # Calcul du taux de réussite du géocodage
   taux_pays <- readRDS(paste0("donnees/osm_",PAYS,"2.RDS")) %>%
     summarise(n_initial=sum(n)) %>% 
     bind_cols(base_pays %>% summarise(n_traite=sum(n))) %>% 
@@ -92,7 +128,7 @@ carte_pays2 <- function(PAYS){
     coord_sf(xlim =c(limites$xmin,limites$xmax),
              ylim =c(limites$ymin,limites$ymax),
              expand = TRUE) +
-    labs(title = paste0("?tre n? ",
+    labs(title = paste0("Être né ",
                         if (PAYS %in% c("KOSOVO","DANEMARK","MONTENEGRO","LUXEMBOURG","PORTUGAL","MAROC")) {
                           "au"
                         } else if (PAYS %in% c("PAYSBAS")) {
@@ -101,7 +137,7 @@ carte_pays2 <- function(PAYS){
                           "en"
                         }
                         ," ",str_to_title(PAYS2)),
-         subtitle = paste0("Lieux de naissance des personnes n?es ",
+         subtitle = paste0("Lieux de naissance des personnes nées ",
                            if (PAYS %in% c("KOSOVO","DANEMARK","MONTENEGRO","LUXEMBOURG","PORTUGAL")) {
                              "au"
                            } else if (PAYS %in% c("PAYSBAS")) {
@@ -111,21 +147,23 @@ carte_pays2 <- function(PAYS){
                            }
                            ," ",
                            str_to_title(PAYS2),
-                           " et d?c?d?es en France de 1970 ? 2020.\n",
+                           " et décédées en France de 1970 à 2020.\n",
                            taux_pays,
-                           " % des naissances ont ?t? g?ocod?es."),
-         caption="Source: Insee, ?tat civil, d?c?s 1970-2020\nG?ocodage via Nominatim (contributions OpenStreetMap)\nTraitements et erreurs: @Re_Mi_La")+
+                           " % des naissances ont été géocodées."),
+         caption="Source: Insee, état civil, décès 1970-2020\nGéocodage via Nominatim (contributions OpenStreetMap)\nTraitements et erreurs: @Re_Mi_La")+
     theme_void()+
     theme(text = element_text(family = "Calibri"),
           plot.title = element_text(face="bold",size=17),
           plot.subtitle = element_text(size=9),
           panel.background = element_rect(fill="lightcyan",colour = NA),
+          plot.background = element_rect(fill="white",color="white"),
           plot.caption = element_text(face = "italic",size=7),
           legend.position = "bottom",
           legend.title = element_text(size=10),
           legend.text = element_text(size=10))+
     guides(fill="none",color= "none",
-           size=guide_legend(override.aes =list(color="tomato1")))+
+           size=guide_legend(override.aes =list(color="tomato1")))
+  
     ggsave(file = paste0("sorties/",PAYS,"2.jpeg"),
            width = 15,
            height = 19,
@@ -133,18 +171,10 @@ carte_pays2 <- function(PAYS){
            dpi = 300)
 }
 
-liste_pays <- c("ISLANDE","ESPAGNE","SUISSE","TURQUIE","HONGRIE","GRECE","PORTUGAL",
-                "POLOGNE","ALLEMAGNE","ITALIE","BELGIQUE","AUTRICHE",
-                "ROUMANIE","RUSSIE","LUXEMBOURG","BULGARIE",
-                "SERBIE","ARMENIE","SLOVAQUIE","DANEMARK","IRLANDE","SUEDE","LETTONIE","NORVEGE",
-                "FINLANDE","MONTENEGRO","ALBANIE",
-                "UKRAINE","CROATIE","LITUANIE","ANDORRE","MACEDOINE","CHYPRE","ESTONIE","MOLDAVIE",
-                "MALTE","SLOVENIE","KOSOVO", "SAINTMARIN","BOSNIEHERZEGOVINE","ROYAUMEUNI","PAYSBAS",
-                "REPUBLIQUETCHEQUE","BIELORUSSIE","ALGERIE","TUNISIE","MAROC")
 walk(liste_pays,carte_pays2)
-carte_pays2("ESPAGNE")
-carte_pays2("ISLANDE")
 
+carte_pays2("ESPAGNE")
+carte_pays2("POLOGNE")
+carte_pays2("ALLEMAGNE")
+carte_pays2("ITALIE")
 carte_pays2("ALGERIE")
-carte_pays2("TUNISIE")
-carte_pays2("MAROC")
