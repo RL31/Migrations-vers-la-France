@@ -46,7 +46,12 @@ etranger <- base_orig %>%
                           str_detect(PAYSOK1,"TANGER") ~ "MAROC",
                           str_detect(PAYSOK1,"TURQUIE") ~ "TURQUIE",
                           TRUE ~ PAYSOK1)) 
-etranger <- etranger %>% 
+
+
+saveRDS(etranger,"donnees/etranger.RDS")
+
+etranger <- readRDS("donnees/etranger.RDS")
+etranger2 <- etranger %>% 
   bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="CROATIE")) %>% 
   bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="SLOVENIE")) %>% 
   bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="MACEDOINE")) %>% 
@@ -63,9 +68,4 @@ etranger <- etranger %>%
   count(PAYSOK, COMMOK) %>% 
   arrange(desc(n))
 
-saveRDS(etranger,"donnees/etranger.RDS")
 rm("base_orig")
-
-
-
-etranger %>% count(PAYSOK) %>% view()

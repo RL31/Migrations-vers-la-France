@@ -3,6 +3,26 @@ library(tidygeocoder)
 
 etranger <- readRDS("donnees/etranger.RDS")
 
+etranger2 <- etranger %>% 
+  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="CROATIE")) %>% 
+  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="SLOVENIE")) %>% 
+  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="MACEDOINE")) %>% 
+  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="BOSNIEHERZEGOVINE")) %>% 
+  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="SERBIE")) %>% 
+  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="MONTENEGRO")) %>% 
+  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="KOSOVO")) %>% 
+  bind_rows(etranger %>% filter(str_detect(PAYSOK1,"TCHECO|SERBIEMON|SERBIEET")) %>% 
+              mutate(PAYSOK=case_when(
+                str_detect(PAYSOK1,"TCHECO") ~ "SLOVAQUIE",
+                str_detect(PAYSOK1,"SERBIEMON|SERBIEET") ~ "MONTENEGRO",
+                TRUE ~ "PAYSOK"
+              ))) %>% 
+  count(PAYSOK, COMMOK) %>% 
+  arrange(desc(n))
+
+
+
+
 # Liste des pays pour lesquels on veut g?ocoder les communes
 liste_pays <- c("ISLANDE","ESPAGNE","SUISSE","TURQUIE","HONGRIE","GRECE","PORTUGAL",
                 "POLOGNE","ALLEMAGNE","ITALIE","BELGIQUE","AUTRICHE",
@@ -34,7 +54,7 @@ geocodage <- function(PAYS){
     PAYS3 <- PAYS
   }
   
-  osm <- etranger %>%
+  osm <- etranger2 %>%
     filter(PAYSOK==PAYS3 | PAYSOK==PAYS | PAYSOK==PAYS2) %>%
     mutate(PAYS2=PAYS2) %>% 
     geocode(city = COMMOK,
