@@ -2,16 +2,18 @@ library(sf)
 library(tidyverse)
 library(stringi)
 
-# Creation de la base des lieux de naissance
+# Creation de la base des lieux de naissance, lieux de décès
 origine <- function(AN){
   annee <- read.csv2(paste0("donnees/site_insee/deces_",AN,".csv")) %>% 
-    select(datenaiss,commnaiss,paysnaiss) 
+    select(datenaiss,commnaiss,paysnaiss,datedeces,lieudeces) %>% 
+    mutate(lieudeces=as.character(lieudeces))
   return(annee)
 }
 liste <- c(as.character(rep(1970:2020)))
 base_orig <- map_df(liste,origine)
 
-# Naissances a l'etranger
+# On ne retient que les naissances a l'etranger ; 
+# Travail sur les toponymes pour les standardiser (Ascii, ponctuations etc.)
 etranger <- base_orig %>% 
   mutate(PAYSOK1=str_replace_all(paysnaiss,"[:punct:]|[:space:]|[:digit:]"," "),#|-
          COMMOK=str_replace_all(commnaiss,"[:punct:]|[:digit:]"," "),#[:space:]||-
@@ -47,25 +49,5 @@ etranger <- base_orig %>%
                           str_detect(PAYSOK1,"TURQUIE") ~ "TURQUIE",
                           TRUE ~ PAYSOK1)) 
 
-
+# Fichier sauvegardé car sert plusieurs fois par la suite
 saveRDS(etranger,"donnees/etranger.RDS")
-
-etranger <- readRDS("donnees/etranger.RDS")
-etranger2 <- etranger %>% 
-  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="CROATIE")) %>% 
-  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="SLOVENIE")) %>% 
-  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="MACEDOINE")) %>% 
-  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="BOSNIEHERZEGOVINE")) %>% 
-  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="SERBIE")) %>% 
-  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="MONTENEGRO")) %>% 
-  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="KOSOVO")) %>% 
-  bind_rows(etranger %>% filter(str_detect(PAYSOK1,"TCHECO|SERBIEMON|SERBIEET")) %>% 
-              mutate(PAYSOK=case_when(
-                str_detect(PAYSOK1,"TCHECO") ~ "SLOVAQUIE",
-                str_detect(PAYSOK1,"SERBIEMON|SERBIEET") ~ "MONTENEGRO",
-                TRUE ~ "PAYSOK"
-              ))) %>% 
-  count(PAYSOK, COMMOK) %>% 
-  arrange(desc(n))
-
-rm("base_orig")

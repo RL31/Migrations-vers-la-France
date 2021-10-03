@@ -1,113 +1,28 @@
 library(tidyverse)
-library(stringi)
 library(sf)
 
-# Création de la base des lieux de naissance
-origine <- function(AN){
-  annee <- read.csv2(paste0("donnees/deces-",AN,".csv"))  %>% 
-    select(datenaiss,commnaiss,paysnaiss,datedeces,lieudeces) %>% 
-    mutate(lieudeces=as.character(lieudeces))
-  return(annee)
-}
-liste <- c(as.character(rep(1970:2020)))
-base_orig <- map_df(liste,~origine(.))
+# Cette fois, analyse de flux importants mais très localisés
 
-base_age <-  base_orig %>% 
-    mutate(age=as.integer(substr(datedeces,1,4))-as.integer(substr(datenaiss,1,4)),
-         annee=substr(datedeces,1,4),
-         annee25=as.integer(substr(datenaiss,1,4))+25) %>%
-  #group_by(annee) %>%
-  group_by(annee25) %>%
-  summarise(agemoy=mean(age,na.rm = T)) %>% 
-  #filter(annee>1971) %>%
-  ungroup() %>% 
-  filter(annee25>1900 & annee25<2022)
+etranger <- readRDS("donnees/etranger.RDS")
 
-saveRDS(base_age,"donnees/base_age.RDS")
-
-  ggplot()+
-  geom_line(aes(x=annee25,y=agemoy,group=1),color="firebrick1",size=1)+
- # geom_line(aes(x=annee25,y=agemoy,group=1),color="firebrick1",size=1)+
-  labs(x="Année des 25 ans",
-       y="Âge moyen au décès")+
-  theme_minimal()+
-  theme(axis.text.x = element_text(angle=90))
-
-
-# Naissances ? l'?tranger
-etranger <- base_orig %>% 
-  mutate(PAYSOK1=str_replace_all(paysnaiss,"[:punct:]|[:space:]|[:digit:]"," "),#|-
-         COMMOK=str_replace_all(commnaiss,"[:punct:]|[:digit:]"," "),#[:space:]||-
-         PAYSOK1=str_to_upper(stri_trans_general(PAYSOK1,"latin-ascii")),
-         COMMOK=str_to_upper(stri_trans_general(COMMOK,"latin-ascii"))
-  ) %>%  
-  filter(PAYSOK1 != ""  & !is.na(PAYSOK1) 
-         & !is.na(COMMOK) & COMMOK !="") %>% 
-  mutate(PAYSOK=case_when(str_detect(PAYSOK1,"ALLEM|RFA|SARRE") | PAYSOK1=="RDA" ~ "ALLEMAGNE",
-                          str_detect(PAYSOK1,"PAG|BALEA|CANAR|MAJORQ") ~ "ESPAGNE",
-                          str_detect(PAYSOK1,"BRET|GB|ANGLE|ANGLON|COSS|GUERNE|JERS|GALL|ROYAUMEUNI") ~ "ROYAUMEUNI",
-                          str_detect(PAYSOK1,"LOGNE") ~ "POLOGNE",
-                          str_detect(PAYSOK1,"PORTUGAL|MADERE|ACOR") ~ "PORTUGAL",
-                          str_detect(PAYSOK1,"BOSNIE") ~ "BOSNIEHERZEGOVINE",
-                          str_detect(PAYSOK1,"BELARUS") ~ "BIELORUSSIE",
-                          str_detect(PAYSOK1,"TCH|BOHEME") ~ "REPUBLIQUETCHEQUE", #dupliquer tchecoslovaquie pour chercher en slovaquie IDEM YOUGO
-                          str_detect(PAYSOK1,"SUISSE|HELV") ~ "SUISSE",
-                          str_detect(PAYSOK1,"SERBIE") ~ "SERBIE",#dupliquer pour montenegro
-                          str_detect(PAYSOK1,"SICI|SARD|ITAL") ~ "ITALIE",
-                          str_detect(PAYSOK1,"UKR") ~ "UKRAINE",
-                          str_detect(PAYSOK1,"CHYP") ~ "CHYPRE",
-                          str_detect(PAYSOK1,"CRET") ~ "GRECE",
-                          str_detect(PAYSOK1,"ALG|ORAN|STANTINE") ~ "ALGERIE",
-                          str_detect(PAYSOK1,"EIRE|IRLAND") ~ "IRLANDE",
-                          str_detect(PAYSOK1,"SLAVEDEMA|MACED") ~ "MACEDOINE",
-                          str_detect(PAYSOK1,"DUCH") ~ "LUXEMBOURG",
-                          str_detect(PAYSOK1,"RUSS|URSS|SIBERIE") ~ "RUSSIE",
-                          str_detect(PAYSOK1,"HOLLANDE") ~ "PAYSBAS",
-                          PAYSOK1=="LT" ~ "LITUANIE",
-                          str_detect(PAYSOK1,"MONAC") ~ "MONACO",
-                          str_detect(PAYSOK1,"MARIN") ~ "SAINTMARIN",
-                          str_detect(PAYSOK1,"TANGER") ~ "MAROC",
-                          str_detect(PAYSOK1,"TURQUIE") ~ "TURQUIE",
-                          TRUE ~ PAYSOK1)) 
-etranger <- etranger %>% 
-  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="CROATIE")) %>% 
-  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="SLOVENIE")) %>% 
-  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="MACEDOINE")) %>% 
-  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="BOSNIEHERZEGOVINE")) %>% 
-  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="SERBIE")) %>% 
-  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="MONTENEGRO")) %>% 
-  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="KOSOVO")) %>% 
-  bind_rows(etranger %>% filter(str_detect(PAYSOK1,"TCHECO|SERBIEMON|SERBIEET")) %>% 
+etranger_flux <- etranger %>%
+  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="CROATIE")) %>%
+  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="SLOVENIE")) %>%
+  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="MACEDOINE")) %>%
+  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="BOSNIEHERZEGOVINE")) %>%
+  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="SERBIE")) %>%
+  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="MONTENEGRO")) %>%
+  bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="KOSOVO")) %>%
+  bind_rows(etranger %>% filter(str_detect(PAYSOK1,"TCHECO|SERBIEMON|SERBIEET")) %>%
               mutate(PAYSOK=case_when(
                 str_detect(PAYSOK1,"TCHECO") ~ "SLOVAQUIE",
                 str_detect(PAYSOK1,"SERBIEMON|SERBIEET") ~ "MONTENEGRO",
                 TRUE ~ "PAYSOK"
-              ))) %>% 
-  count(PAYSOK, COMMOK,lieudeces) %>% 
+              ))) %>%
+  count(PAYSOK, COMMOK,lieudeces) %>%
   arrange(desc(n))
 
-
-
-etranger %>% 
-  filter(!PAYSOK %in% c("MARTINIQUE","GUADELOUPE","GUYANE","REUNION","LA REUNION")) %>% 
-  mutate(dpt=substr(lieudeces,1,2)) %>% 
-  count(PAYSOK,COMMOK,dpt,wt=n) %>% 
-  filter(dpt!="97") %>% 
-  group_by(PAYSOK,COMMOK) %>% 
-  mutate(pct=n/sum(n)*100,
-         tot=sum(n)) %>% 
-  ungroup() %>% 
-  filter(tot>250 & pct>40) %>% view()
-
-
-
-corato <- etranger %>% 
-  filter(COMMOK=="CORATO" ) %>% 
-  left_join(readRDS("sorties/base_complete.RDS") %>% select(-n),by=c("COMMOK","PAYSOK")) %>% 
-  select(COMMOK,lieudeces,n,x,y)
-
-saveRDS(corato,"./donnees/corato.RDS")
-corato <- readRDS("./donnees/corato.RDS")
+# Fonds de carte Eurostat et IGN Admin Express COG
 fond <- st_read("donnees/CNTR_RG_10M_2020_3035.shp")
 
 coord_FR <- st_read("donnees/COMMUNE.shp") %>% 
@@ -115,7 +30,16 @@ coord_FR <- st_read("donnees/COMMUNE.shp") %>%
   st_centroid() %>% 
   mutate(x_fr=st_coordinates(.)[,1],
          y_fr=st_coordinates(.)[,2]) %>% 
-  select(INSEE_COM,x_fr,y_fr,NOM_COM)
+  select(INSEE_COM,x_fr,y_fr,NOM)
+
+
+corato <- etranger_flux %>% 
+  filter(COMMOK=="CORATO" ) %>% 
+  left_join(readRDS("sorties/base_complete.RDS") %>% select(-n),by=c("COMMOK","PAYSOK")) %>% 
+  select(COMMOK,lieudeces,n,x,y)
+
+saveRDS(corato,"./donnees/corato.RDS")
+corato <- readRDS("./donnees/corato.RDS")
 
 cc <- corato %>% 
   left_join(coord_FR, by=c("lieudeces"="INSEE_COM")) %>% 
@@ -349,7 +273,7 @@ ggplot()+
         legend.position = "bottom",
         legend.title = element_text(size=10),
         legend.text = element_text(size=10),
-        plot.background = element_rect(fill="white",color=NA))+
+        plot.background = element_rect(fill="white",color="white"))+
   guides(size="none",alpha="none")
 
 ggsave("sorties/sommatino.jpg",dpi=300,units=c("mm"))
@@ -358,6 +282,22 @@ ggsave("sorties/sommatino.jpg",dpi=300,units=c("mm"))
 
 # Faire une carte de l'Europe avec les pays limitrophes d'une couleur et le lieu de décès des personnes
 # de ces pays de la même couleur
-# 
+
+deces_france <- coord_FR %>% 
+  inner_join(etranger_flux %>% 
+               filter(PAYSOK %in% c("ITALIE","ALLEMAGNE","BELGIQUE","ESPAGNE")),
+             by=c("INSEE_COM"="lieudeces"))
+
+
+deces_france %>% 
+  ggplot()+
+  geom_sf(aes(size=n),color="firebrick2",alpha=.5)+
+  scale_size_continuous( range = c(0.000000001,10) )+
+  facet_wrap(~PAYSOK)+
+  theme_void()+
+  theme(legend.position="bottom",
+        text = element_text(color = "firebrick2"))
+
+ggsave("sorties/carte_lieux_deces.jpg",dpi=300,units=c("mm")) 
 # pb sur wanne  en Allemagne
 # Mayence Mainz était FR jusqu'en 1930

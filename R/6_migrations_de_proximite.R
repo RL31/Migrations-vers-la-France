@@ -5,29 +5,25 @@ base_complete <- readRDS("sorties/base_complete.RDS")
 
 fond <- st_read("donnees/CNTR_RG_10M_2020_3035.shp")
 
-
+# Définition de seuils de proximité
 FR <- fond %>% 
   filter(CNTR_ID=="FR") %>% 
   st_cast("POLYGON") %>% 
   mutate(ID=row_number()) %>%
   filter(ID %in% c(1,3) )
-
 FR50 <- FR %>% 
   st_buffer(dist = 50000)
 FR100 <- FR %>% 
   st_buffer(dist = 100000)
 FR25 <- FR %>% 
   st_buffer(dist = 25000)
-
 FR200 <- FR %>% 
   st_buffer(dist = 200000)
 
 
-ggplot()+
-  geom_sf(data=FR)+
-  geom_sf(data=FR50,color="red",fill="transparent")
-
-
+# ggplot()+
+#   geom_sf(data=FR)+
+#   geom_sf(data=FR50,color="red",fill="transparent")
 
 proximite25 <- st_intersection(FR25,base_complete) %>% 
   count(PAYSOK,wt=n) %>% 

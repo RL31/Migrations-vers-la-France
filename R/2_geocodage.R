@@ -1,6 +1,9 @@
 library(tidyverse)
 library(tidygeocoder)
 
+
+# Reprise du fichier des naissances à l'étranger pour le préparer avant le géocodage
+# notamment : duplication de certains lignes pour les pays divisés en plusieurs depuis
 etranger <- readRDS("donnees/etranger.RDS")
 
 etranger2 <- etranger %>% 
@@ -20,10 +23,7 @@ etranger2 <- etranger %>%
   count(PAYSOK, COMMOK) %>% 
   arrange(desc(n))
 
-
-
-
-# Liste des pays pour lesquels on veut g?ocoder les communes
+# Liste des pays pour lesquels on veut géocoder les communes de naissance
 liste_pays <- c("ISLANDE","ESPAGNE","SUISSE","TURQUIE","HONGRIE","GRECE","PORTUGAL",
                 "POLOGNE","ALLEMAGNE","ITALIE","BELGIQUE","AUTRICHE",
                 "ROUMANIE","RUSSIE","LUXEMBOURG","BULGARIE",

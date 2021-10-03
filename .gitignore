@@ -42,3 +42,8 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+donnees/COMMUNE.cpg
+donnees/COMMUNE.dbf
+donnees/COMMUNE.shp
+donnees/COMMUNE.prj
+donnees/COMMUNE.shx

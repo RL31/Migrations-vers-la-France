@@ -3,8 +3,7 @@ library(sf)
 library(extrafont)
 #loadfonts(device = "win")
 
-# Création d'une base regroupant tous les pays
-# 
+# Création d'une base regroupant toutes les données géocodées
 liste_pays <- c("ISLANDE","ESPAGNE","SUISSE","TURQUIE","HONGRIE","GRECE","PORTUGAL",
                 "POLOGNE","ALLEMAGNE","ITALIE","BELGIQUE","AUTRICHE",
                 "ROUMANIE","RUSSIE","LUXEMBOURG","BULGARIE",
@@ -37,7 +36,8 @@ fond <- st_read("donnees/CNTR_RG_10M_2020_3035.shp") # remplacer par giscoR ?
 # Pour faire le lien entre le nom du pays Insee et le nom Eurostat
 lien_id <- read.csv("donnees/libelle_pays.csv")
 
-# Fonction qui traite chaque pays un à un
+# Fonction qui traite chaque pays un à un pour produire une carte
+# en ronds proportionnels selon le nombre de naissances (carte exportée en jpg)
 carte_pays2 <- function(PAYS){
   
   # définition des limites de la zone à cartographier
@@ -58,17 +58,7 @@ carte_pays2 <- function(PAYS){
     limites$ymin <- 2147880
     limites$ymax <- 2614333
   }
-  
-  # Virer ?a et utiliser base_comlete
-  # base_pays <- readRDS(paste0("donnees/osm_",PAYS,"2.RDS")) %>% 
-  #   filter(!is.na(display_name)) %>% 
-  #   count(long,lat,display_name,wt=n) %>% 
-  #   st_as_sf(coords=c("long","lat"),crs=4326) %>% 
-  #   st_transform(3035) %>% 
-  #   mutate(y=unlist(map(.$geometry,2)),
-  #          x=unlist(map(.$geometry,1))) %>% 
-  #   select(x,y,n,display_name)
-  # 
+ 
   base_pays <- base_complete %>% 
     filter(PAYSOK==PAYS)
   
@@ -177,8 +167,9 @@ carte_pays2("ALGERIE")
 
 
 
-
-# Pour la carte europe entiere
+##################################################
+# La même chose mais pour tous les pays d'Europe #
+##################################################
 
 limites_europe <- fond %>% filter(NAME_ENGL %in% c("Iceland","Norway","Greece")) %>% st_bbox()
 

@@ -1,69 +1,9 @@
 library(tidyverse)
-#library(stringi)
-# library(extrafont)
-# #loadfonts(dev="win")
-# 
-# # Creation de la base des lieux de naissance
-# origine <- function(AN){
-#   annee <- read.csv2(paste0("donnees/deces-",AN,".csv")) %>% 
-#     select(datenaiss,commnaiss,paysnaiss) 
-#   return(annee)
-# }
-# liste <- c(as.character(rep(1970:2020)))
-# base_orig <- map_df(liste,~origine(.))
-# 
-# # Naissances ? l'?tranger
-# etranger <- base_orig %>% 
-#   mutate(PAYSOK1=str_replace_all(paysnaiss,"[:punct:]|[:space:]|[:digit:]"," "),#|-
-#          COMMOK=str_replace_all(commnaiss,"[:punct:]|[:digit:]"," "),#[:space:]||-
-#          PAYSOK1=str_to_upper(stri_trans_general(PAYSOK1,"latin-ascii")),
-#          COMMOK=str_to_upper(stri_trans_general(COMMOK,"latin-ascii"))
-#   ) %>%  
-#   filter(PAYSOK1 != ""  & !is.na(PAYSOK1) 
-#          & !is.na(COMMOK) & COMMOK !="") %>% 
-#   mutate(PAYSOK=case_when(str_detect(PAYSOK1,"ALLEM|RFA|SARRE") | PAYSOK1=="RDA" ~ "ALLEMAGNE",
-#                           str_detect(PAYSOK1,"PAG|BALEA|CANAR|MAJORQ") ~ "ESPAGNE",
-#                           str_detect(PAYSOK1,"BRET|GB|ANGLE|ANGLON|COSS|GUERNE|JERS|GALL|ROYAUMEUNI") ~ "ROYAUMEUNI",
-#                           str_detect(PAYSOK1,"LOGNE") ~ "POLOGNE",
-#                           str_detect(PAYSOK1,"PORTUGAL|MADERE|ACOR") ~ "PORTUGAL",
-#                           str_detect(PAYSOK1,"BOSNIE") ~ "BOSNIEHERZEGOVINE",
-#                           str_detect(PAYSOK1,"BELARUS") ~ "BIELORUSSIE",
-#                           str_detect(PAYSOK1,"TCH|BOHEME") ~ "REPUBLIQUETCHEQUE", #dupliquer tchecoslovaquie pour chercher en slovaquie IDEM YOUGO
-#                           str_detect(PAYSOK1,"SUISSE|HELV") ~ "SUISSE",
-#                           str_detect(PAYSOK1,"SERBIE") ~ "SERBIE",#dupliquer pour montenegro
-#                           str_detect(PAYSOK1,"SICI|SARD|ITAL") ~ "ITALIE",
-#                           str_detect(PAYSOK1,"UKR") ~ "UKRAINE",
-#                           str_detect(PAYSOK1,"CHYP") ~ "CHYPRE",
-#                           str_detect(PAYSOK1,"CRET") ~ "GRECE",
-#                           str_detect(PAYSOK1,"ALG|ORAN|STANTINE") ~ "ALGERIE",
-#                           str_detect(PAYSOK1,"EIRE|IRLAND") ~ "IRLANDE",
-#                           str_detect(PAYSOK1,"SLAVEDEMA|MACED") ~ "MACEDOINE",
-#                           str_detect(PAYSOK1,"DUCH") ~ "LUXEMBOURG",
-#                           str_detect(PAYSOK1,"RUSS|URSS|SIBERIE") ~ "RUSSIE",
-#                           str_detect(PAYSOK1,"HOLLANDE") ~ "PAYSBAS",
-#                           PAYSOK1=="LT" ~ "LITUANIE",
-#                           str_detect(PAYSOK1,"MONAC") ~ "MONACO",
-#                           str_detect(PAYSOK1,"MARIN") ~ "SAINTMARIN",
-#                           str_detect(PAYSOK1,"TANGER") ~ "MAROC",
-#                           str_detect(PAYSOK1,"TURQUIE") ~ "TURQUIE",
-#                           TRUE ~ PAYSOK1)) 
-# etranger <- etranger %>% 
-#   bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="CROATIE")) %>% 
-#   bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="SLOVENIE")) %>% 
-#   bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="MACEDOINE")) %>% 
-#   bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="BOSNIEHERZEGOVINE")) %>% 
-#   bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="SERBIE")) %>% 
-#   bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="MONTENEGRO")) %>% 
-#   bind_rows(etranger %>% filter(PAYSOK1=="YOUGOSLAVIE") %>% mutate(PAYSOK="KOSOVO")) %>% 
-#   bind_rows(etranger %>% filter(str_detect(PAYSOK1,"TCHECO|SERBIEMON|SERBIEET")) %>% 
-#               mutate(PAYSOK=case_when(
-#                 str_detect(PAYSOK1,"TCHECO") ~ "SLOVAQUIE",
-#                 str_detect(PAYSOK1,"SERBIEMON|SERBIEET") ~ "MONTENEGRO",
-#                 TRUE ~ "PAYSOK"
-#               ))) %>% 
-#   count(PAYSOK, COMMOK,ANAIS=substr(datenaiss,1,4)) %>% 
-#   arrange(desc(n))
-# 
+library(extrafont)
+loadfonts(dev="win")
+
+# On essaie ici de circonscrire la période de "fiabilité" des données sur le
+# sujet des migrations
 
 base_complete <- readRDS("sorties/base_complete.RDS")
 
@@ -83,12 +23,19 @@ historique <- etranger %>%
                 str_detect(PAYSOK1,"SERBIEMON|SERBIEET") ~ "MONTENEGRO",
                 TRUE ~ "PAYSOK"
               ))) %>% 
-  count(PAYSOK, ANAIS=substr(datenaiss,1,4)) %>% 
-  left_join(base_complete %>% count(PAYSOK),by=c("PAYSOK"))
+  count(PAYSOK, COMMOK, ANAIS=substr(datenaiss,1,4)) %>% 
+  left_join(base_complete %>% 
+              st_drop_geometry() %>% 
+              as.data.frame() %>% 
+              select(PAYSOK,COMMOK) %>% 
+              mutate(geocodage=1),by=c("PAYSOK","COMMOK")) %>% 
+  mutate(geocodage=if_else(is.na(geocodage),0,geocodage))
 
 
-
+# Fonction qui produit un graphique par pays :
+# de 1900 à 2000, combien de "migrants" décédés avaient 25 ans pour chaque année donnée
 graph_chronologie <- function(PAYS){
+
 
   if(PAYS=="PAYSBAS"){
     PAYS2 <- "PAYS-BAS"
@@ -113,28 +60,24 @@ graph_chronologie <- function(PAYS){
   
   historique %>% 
     filter(PAYSOK==PAYS ) %>% 
-    mutate(an20=as.integer(ANAIS)+25,
-           geocodage=as.factor(if_else(is.na(display_name),"0","1"))) %>%
-    count(an20,geocodage,wt=n.x) %>% 
+    mutate(an20=as.integer(ANAIS)+25) %>%
+    count(an20,geocodage,wt=n) %>% 
     filter(an20>1800 & an20<2025) %>% 
     ggplot(aes(x=an20,y=n,group=geocodage))+
-    geom_line(aes(color=geocodage),size=1,alpha=.7) +
+    geom_line(aes(color=as.factor(geocodage)),size=1,alpha=.7) +
     annotate("rect", xmin=1900, xmax=1930, ymin=0, ymax=Inf, alpha=0.2, fill="gray80",color=NA)+ 
     annotate("rect", xmin=1960, xmax=2000, ymin=0, ymax=Inf, alpha=0.2, fill="gray80",color=NA)+ 
-    # annotate("text", x=1920,y=mean(n),
-    #          label="Les données non géocodées portent sur un territoire\nplus étendu que la pays actuel.",
-    #          color=
-    #            if(PAYS %in% c("ALBANIE","SERBIE","SLOVAQUIE","CROATIE","MACEDOINE","SLOVENIE",
-    #                           "BOSNIEHERZEGOVINE","REPUBLIQUETCHEQUE","MONTENEGRO","KOSOVO")) {
-    #              "gray10"
-    #            } else {
-    #              "transparent"
-    #            }
-    #          
-    # )+
-    # geom_rect(aes(xmin = 1900, xmax = 1925,
-    #               ymin = 0, ymax = max(n)),
-    #           colour=NA,fill="gray80",alpha=.5)+
+    annotate("text", x=1920,y=mean(n),
+             label="Les données non géocodées portent sur un territoire\nplus étendu que la pays actuel.",
+             color=
+               if(PAYS %in% c("ALBANIE","SERBIE","SLOVAQUIE","CROATIE","MACEDOINE","SLOVENIE",
+                              "BOSNIEHERZEGOVINE","REPUBLIQUETCHEQUE","MONTENEGRO","KOSOVO")) {
+                 "gray10"
+               } else {
+                 "transparent"
+               }
+
+    )+
     scale_color_manual(name="Géocodage",
                        labels=c("0"="Echec","1"="Réussite"),
                        values=c("0"="coral2","1"="darkolivegreen3"))+
@@ -172,7 +115,7 @@ graph_chronologie <- function(PAYS){
            text = element_text(size=6,family = "Calibri"),
            plot.title = element_text(face="bold",size=10),
            plot.subtitle = element_text(size=6),
-          #plot.caption = element_text(face = "italic",size=4),
+          # plot.caption = element_text(face = "italic",size=4),
            legend.title = element_text(size=6),
           legend.text = element_text(size=6),
           plot.background = element_rect(fill="white",color="white")
@@ -199,17 +142,14 @@ liste_pays <- c("ISLANDE","ESPAGNE","ALLEMAGNE","ITALIE","AUTRICHE","ARMENIE","I
 walk(liste_pays,graph_chronologie)       
 
 
-
-saveRDS(historique,"donnees/historique.RDS")
-
+# Assemblage pour 4 pays intéressants
 chronologies <- historique %>% 
   filter(PAYSOK %in% c("POLOGNE","ESPAGNE","MAROC","AUTRICHE")) %>% 
-  mutate(an20=as.integer(ANAIS)+25,
-         geocodage=as.factor(if_else(is.na(display_name),"0","1"))) %>%
-  count(PAYSOK,an20,geocodage,wt=n.x) %>% 
+  mutate(an20=as.integer(ANAIS)+25) %>%
+  count(PAYSOK,an20,geocodage,wt=n) %>% 
   filter(an20>1800 & an20<2025) %>% 
   ggplot(aes(x=an20,y=n,group=geocodage))+
-  geom_line(aes(color=geocodage),size=1,alpha=.7) +
+  geom_line(aes(color=as.factor(geocodage)),size=1,alpha=.7) +
   facet_wrap(~PAYSOK,scales = "free_y")+
   annotate("rect", xmin=1900, xmax=1930, ymin=0, ymax=Inf, alpha=0.2, fill="gray80",color=NA)+ 
   annotate("rect", xmin=1960, xmax=2000, ymin=0, ymax=Inf, alpha=0.2, fill="gray80",color=NA)+ 
@@ -230,8 +170,13 @@ chronologies <- historique %>%
         plot.subtitle = element_text(size=10),
         plot.caption = element_text(face = "italic",size=6),
         legend.title = element_text(size=8),
-        legend.text = element_text(size=8)
+        legend.text = element_text(size=8),
+        plot.background = element_rect(fill="white",color="white")
   )
 
-library(plotly)
-ggplotly(chronologies)
+
+ggsave(paste0("sorties/chronologie_4.jpeg"),width=20,height=16,dpi=300,units = "cm")
+
+
+# library(plotly)
+# ggplotly(chronologies)
