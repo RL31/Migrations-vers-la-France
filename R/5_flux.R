@@ -58,23 +58,25 @@ ggplot()+
           colour="gray85")+
   geom_curve(data=cc ,
              aes(x=x, y=y, xend=x_fr, yend=y_fr,size=n,alpha=n),
-             curvature=0.35, colour="tomato1"#,
+             curvature=0.35, colour="palevioletred3",#tomato1"#,
              #arrow=NA
              #arrow(length=unit(0.1, "cm"),type="closed")
   )+
   geom_label(data=cc %>% head(1),aes(x=x,y=y,label=str_to_title(COMMOK)),color="gray50",alpha=.8)+
   ggrepel::geom_label_repel(data = cc %>% slice_max(order_by = n,n=5),
-                            aes(x=I(1*x_fr),y=y_fr,label=NOM_COM),alpha=.8,
+                            aes(x=I(1*x_fr),y=y_fr,label=NOM),alpha=.8,
                             direction = "both",color="gray50")+
   scale_alpha_continuous(range = c(0.03, 0.3))+
   coord_sf(xlim =c(3400000 ,5048517),
            ylim =c(1800000,3167694),
            expand = TRUE) +
   labs(title = paste0("De Corato au Dauphiné"),
-       subtitle = paste0("72 % des 2846 migrants nés à Corato sont décédés en Isère"),
-       caption="Source: Insee, état civil\nTraitements et erreurs: @Re_Mi_La")+
+       subtitle = paste0("72 % des 2 846 personnes nées à Corato sont décédées en Isère"),
+       caption="Source: Insee, état civil, décès depuis 1970\nGéocodage via {tidygeocoder}\nTraitements et erreurs: @Re_Mi_La",
+       size="Effectif")+
   theme_void()+
-  theme(plot.title = element_text(face="bold",size=17),
+  theme(text=element_text(color="black"),
+    plot.title = element_text(face="bold",size=17),
         plot.subtitle = element_text(size=9),
         panel.background = element_rect(fill="lightcyan2",colour = NA),
         plot.caption = element_text(face = "italic",size=9),
@@ -82,14 +84,14 @@ ggplot()+
         legend.title = element_text(size=10),
         legend.text = element_text(size=10),
         plot.background = element_rect(fill="white",color=NA))+
-  guides(size="none",alpha="none")
+  guides(alpha="none")
 
-ggsave("sorties/corato.jpg",dpi=300,units=c("mm"))
-
-
+ggsave("sorties/corato.jpg",width=150, height=170, dpi=300,units=c("mm"))
 
 
-sommatino <- etranger %>% 
+
+
+sommatino <-  etranger_flux %>% 
   filter(COMMOK=="SOMMATINO" ) %>% 
   left_join(readRDS("sorties/base_complete.RDS") %>% select(-n),by=c("COMMOK","PAYSOK")) %>% 
   select(COMMOK,lieudeces,n,x,y)
@@ -121,21 +123,22 @@ ggplot()+
           colour="gray85")+
   geom_curve(data=ss ,
              aes(x=x, y=y, xend=x_fr, yend=y_fr,size=n,alpha=n),
-             curvature=0.35, colour="tomato1"#,
+             curvature=0.35, colour="palevioletred3"#,
              #arrow=NA
              #arrow(length=unit(0.1, "cm"),type="closed")
   )+
   geom_label(data=ss %>% head(1),aes(x=x,y=y,label=str_to_title(COMMOK)),color="gray50",alpha=.8)+
   ggrepel::geom_label_repel(data = ss %>% slice_max(order_by = n,n=5),
-                            aes(x=I(1*x_fr),y=y_fr,label=NOM_COM),alpha=.8,
+                            aes(x=I(1*x_fr),y=y_fr,label=NOM),alpha=.8,
                             direction = "both",color="gray50")+
   scale_alpha_continuous(range = c(0.03, 0.3))+
   coord_sf(xlim =c(3700000 ,limites_flux$xmax),
            ylim =c(limites_flux$ymin,limites_flux$ymax),
            expand = TRUE) +
   labs(title = paste0("De la Sicile au Dauphiné"),
-       subtitle = paste0("73 % des 1325 migrants nés à Sommatino sont décédés en Isère"),
-       caption="Source: Insee, état civil\nTraitements et erreurs: @Re_Mi_La")+
+       subtitle = paste0("73 % des 1 325 personnes nées à Sommatino sont décédées en Isère"),
+       caption="Source: Insee, état civil, décès depuis 1970\nGéocodage via {tidygeocoder}\nTraitements et erreurs: @Re_Mi_La",
+       size="Effectif")+
   theme_void()+
   theme(plot.title = element_text(face="bold",size=17),
         plot.subtitle = element_text(size=9),
@@ -145,14 +148,14 @@ ggplot()+
         legend.title = element_text(size=10),
         legend.text = element_text(size=10),
         plot.background = element_rect(fill="white",color=NA))+
-  guides(size="none",alpha="none")
+  guides(alpha="none")
 
-ggsave("sorties/sommatino.jpg",dpi=300,units=c("mm"))
-
-
+ggsave("sorties/sommatino.jpg",width=150, height=170,dpi=300,units=c("mm"))
 
 
-herne <- etranger %>% 
+
+
+herne <- etranger_flux %>% 
   filter(COMMOK=="HERNE" ) %>% 
   left_join(readRDS("sorties/base_complete.RDS") %>% select(-n),by=c("COMMOK","PAYSOK")) %>% 
   select(COMMOK,lieudeces,n,x,y)
@@ -185,21 +188,22 @@ ggplot()+
           colour="gray85")+
   geom_curve(data=hh ,
              aes(x=x, y=y, xend=x_fr, yend=y_fr,size=n,alpha=n),
-             curvature=0.35, colour="tomato1"#,
+             curvature=0.35, colour="palevioletred3"#,
              #arrow=NA
              #arrow(length=unit(0.1, "cm"),type="closed")
   )+
   geom_label(data=hh %>% head(1),aes(x=x,y=y,label=str_to_title(COMMOK)),color="gray50",alpha=.8)+
   ggrepel::geom_label_repel(data = hh %>% slice_max(order_by = n,n=5),
-                            aes(x=I(1*x_fr),y=y_fr,label=NOM_COM),alpha=.8,
+                            aes(x=I(1*x_fr),y=y_fr,label=NOM),alpha=.8,
                             direction = "both",color="gray50")+
   scale_alpha_continuous(range = c(0.03, 0.3))+
   coord_sf(xlim =c(3500000 ,4300000),
            ylim =c(2700000,3300000),
            expand = TRUE) +
   labs(title = paste0("Des mines de Westphalie au bassin houiller\ndu Nord-Pas-de-Calais"),
-       subtitle = paste0("73 % des 852 migrants nés à Herne sont décédés dans le Nord ou le Pas-de-Calais"),
-       caption="Source: Insee, état civil\nTraitements et erreurs: @Re_Mi_La")+
+       subtitle = paste0("73 % des 852 personnes nées à Herne sont décédées dans le Nord ou le Pas-de-Calais"),
+       caption="Source: Insee, état civil, décès depuis 1970\nGéocodage via {tidygeocoder}\nTraitements et erreurs: @Re_Mi_La",
+       size="Effectif")+
   theme_void()+
   theme(plot.title = element_text(face="bold",size=17),
         plot.subtitle = element_text(size=9),
@@ -209,22 +213,22 @@ ggplot()+
         legend.title = element_text(size=10),
         legend.text = element_text(size=10),
         plot.background = element_rect(fill="white",color=NA))+
-  guides(size="none",alpha="none")
+  guides(alpha="none")
 
-ggsave("./sorties/herne.jpg",dpi=300,units=c("mm"))
-
-
+ggsave("./sorties/herne.jpg",width=150, height=170,dpi=300,units=c("mm"))
 
 
 
-citta <- etranger %>% 
+
+
+citta <- etranger_flux %>% 
   filter(COMMOK=="CITTA DI CASTELLO" ) %>% 
   left_join(readRDS("sorties/base_complete.RDS") %>% select(-n),by=c("COMMOK","PAYSOK")) %>% 
   select(COMMOK,lieudeces,n,x,y) %>% 
   mutate(lieudeces2= str_pad(lieudeces,5,"left","0")) %>% 
   count(COMMOK,lieudeces2,x,y,wt=n)
 
-saveRDS(sommatino,"donnees/sommatino.RDS")
+saveRDS(citta,"donnees/citta")
 fond <- st_read("donnees/CNTR_RG_10M_2020_3035.shp")
 
 coord_FR <- st_read("donnees/COMMUNE.shp") %>% 
@@ -250,21 +254,22 @@ ggplot()+
           colour="gray85")+
   geom_curve(data=cc ,
              aes(x=x, y=y, xend=x_fr, yend=y_fr,size=n,alpha=n),
-             curvature=0.35, colour="tomato1"#,
+             curvature=0.35, colour="palevioletred3"#,
              #arrow=NA
              #arrow(length=unit(0.1, "cm"),type="closed")
   )+
   geom_label(data=cc %>% head(1),aes(x=x,y=y,label=str_to_title(COMMOK)),color="gray50",alpha=.8)+
   ggrepel::geom_label_repel(data = cc %>% slice_max(order_by = n,n=5),
-                            aes(x=I(1*x_fr),y=y_fr,label=NOM_COM),alpha=.8,
+                            aes(x=I(1*x_fr),y=y_fr,label=NOM),alpha=.8,
                             direction = "both",color="gray50")+
   scale_alpha_continuous(range = c(0.03, 0.3))+
   coord_sf(xlim =c(3700000 ,4800000),
            ylim =c(2000000,2900000),
            expand = TRUE) +
   labs(title = paste0("De l'Ombrie aux Alpes-Maritimes"),
-       subtitle = paste0("84 % des 899 migrants nés à Citta di Castello sont décédés dans les Alpes-Maritimes"),
-       caption="Source: Insee, état civil\nTraitements et erreurs: @Re_Mi_La")+
+       subtitle = paste0("84 % des 899 personnes nées à Citta di Castello sont décédées dans les Alpes-Maritimes"),
+       caption="Source: Insee, état civil, décès depuis 1970\nGéocodage via {tidygeocoder}\nTraitements et erreurs: @Re_Mi_La",
+       size="Effectif")+
   theme_void()+
   theme(plot.title = element_text(face="bold",size=17),
         plot.subtitle = element_text(size=9),
@@ -274,9 +279,9 @@ ggplot()+
         legend.title = element_text(size=10),
         legend.text = element_text(size=10),
         plot.background = element_rect(fill="white",color="white"))+
-  guides(size="none",alpha="none")
+  guides(alpha="none")
 
-ggsave("sorties/sommatino.jpg",dpi=300,units=c("mm"))
+ggsave("sorties/cittadicastello.jpg",width=150, height=170,dpi=300,units=c("mm"))
 
 
 
