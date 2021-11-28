@@ -52,7 +52,7 @@ cc %>%
   count(substr(lieudeces,1,2)=="38",wt=n) %>% 
   mutate(pct=n/sum(n)*100)
 
-ggplot()+
+carte_corato <- ggplot()+
   geom_sf(data=fond,
           fill="gray97",
           colour="gray85")+
@@ -117,7 +117,7 @@ ss %>%
   count(substr(lieudeces,1,2)=="38",wt=n) %>% 
   mutate(pct=n/sum(n)*100)
 
-ggplot()+
+carte_sommatino <- ggplot()+
   geom_sf(data=fond,
           fill="gray97",
           colour="gray85")+
@@ -182,7 +182,7 @@ hh %>%
   count(substr(lieudeces,1,2) %in% c("59","62"),wt=n) %>% 
   mutate(pct=n/sum(n)*100)
 
-ggplot()+
+carte_herne <- ggplot()+
   geom_sf(data=fond,
           fill="gray97",
           colour="gray85")+
@@ -248,7 +248,7 @@ cc %>%
   count(substr(lieudeces2,1,2)=="06",wt=n) %>% 
   mutate(pct=n/sum(n)*100)
 
-ggplot()+
+carte_citta <- ggplot()+
   geom_sf(data=fond,
           fill="gray97",
           colour="gray85")+
@@ -284,6 +284,12 @@ ggplot()+
 ggsave("sorties/cittadicastello.jpg",width=150, height=170,dpi=300,units=c("mm"))
 
 
+
+
+library(patchwork)
+
+
+(carte_corato + carte_sommatino)/(carte_herne + carte_citta)
 
 # Faire une carte de l'Europe avec les pays limitrophes d'une couleur et le lieu de décès des personnes
 # de ces pays de la même couleur

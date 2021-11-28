@@ -87,19 +87,23 @@ waffle <- proximite %>%
 ggplot( aes(fill=seuil, values=part)) +
   geom_waffle(color = "white", size=1.125, n_rows = 10, 
               make_proportional = TRUE) +
-  scale_fill_manual(name="Commune de naissance à moins de ...\nde la frontière française",
-                    labels=c("pct25"="25 km",
-                             "pct50"="50 km",
-                             "pct100"="100 km",
-                             "pct200"="200 km",
+  scale_fill_manual(name="Commune de naissance à moins de ... km de la frontière française",
+                    labels=c("pct25"="25",
+                             "pct50"="50",
+                             "pct100"="100",
+                             "pct200"="200",
                              "plus"="Plus"),
                     values=c("pct25"="coral4",
                              "pct50"="coral3",
                              "pct100"="coral2",
                              "pct200"="coral1",
-                             "plus"="gray80"))+
-  facet_wrap(~PAYSOK) +
+                             "plus"="gray90"))+
+  facet_wrap(~PAYSOK, nrow = 2) +
   scale_x_discrete(expand=c(0,0)) +
   scale_y_discrete(expand=c(0,0)) +
-  coord_equal()
+  theme(legend.position = "bottom",
+        text = element_text(size=13),
+        strip.background =element_rect(fill="white"))+
+  coord_equal()+
+  guides(fill = guide_legend(title.position = 'top'))
 
