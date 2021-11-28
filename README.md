@@ -117,7 +117,9 @@ en Allemagne, de Corato, Sommatino et Città di Castello en Italie
 
 ![flux](https://github.com/RL31/Migrations-vers-la-France/blob/0e87133e02b1907896add964c57f8dafa9228ad0/sorties/montage_flux.jpg)
 
-L'intérêt
+L'intérêt de ces représentations, et plus largement de ce travail, est d'approcher la petite histoire. Dépasser le discours généraliste sur "les Italiens" pour évoquer précisément l'histoire 
+des habitants de Corato : fuyant la famine, nombre d'entre eux sont venus dans le cadre d'accords gouvernementaux entre l'Italie et la France. Les départs de Sommatino renvoient à la fin de l'exploitation des mines de soufre.
+Le cas de Herne nous fait entrer dans l'histoire mouvementée des [mineurs westphaliens](https://fr.wikipedia.org/wiki/Mineurs_westphaliens).
 
 Migrations polonaises : les frontières comme limites
 ====================================================
@@ -130,7 +132,7 @@ Szczeczin (Stettin), Głogów (Glogau) et Wrocław (Breslau) étaient
 allemandes.
 
 En modifiant l'attribut "pays" avant le géocodage on parvient alors à "récupérer"
-d'autres villes de naissance
+d'autres villes de naissance, sur les anciens territoires polonais à l'est, sur les futurs territoires polonais à l'ouest.
 
 ![pologne_pays](https://github.com/RL31/Migrations-vers-la-France/blob/1d55b214855cef0ec617f5ede9769e478c06e0ac/sorties/frontieres_polonaises.jpeg)
 ![pologne_chronologie](https://github.com/RL31/Migrations-vers-la-France/blob/1d55b214855cef0ec617f5ede9769e478c06e0ac/sorties/evolution_pologne.jpeg)
