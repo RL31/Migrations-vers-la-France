@@ -45,7 +45,7 @@ très élevé, indiquant ainsi que seuls les décès tardifs sont recensés.
 Au-delà de 1950, l’âge moyen, au décès est très faible, indiquant au
 contraire que ces décès sont majoritairement prématurés.
 
-[ajouter graph age moyen au deces]
+[ajouter graphique âge moyen au décès]
 
 
 ### Noms de lieux : les noms
@@ -59,6 +59,8 @@ informatisés de l’Insee. Par ailleurs, au fil des années, les découpages
 géographiques ont évolué, que ce soit les frontières des pays, les
 contours des communes, leur statut administratif ou leur dénomination.
 Autant dire que l’exercice est périlleux.
+
+Ci-dessous, l'exemple des multiples dénominations de la ville de La Haye aux Pays-Bas.
 
 ![la-haye](https://github.com/RL31/Migrations-vers-la-France/blob/7b1fb931b3caa1e3f8ce5e35904de75f6374da4a/sorties/exemple_lahaye.jpg)
 
