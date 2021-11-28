@@ -113,7 +113,6 @@ Petite histoire et grands mouvements
 Lorsqu’on affiche les principales villes d’origine (de naissance), la
 lecture des cartes révèle quelques surprises. Ainsi, les villes d’Herne
 en Allemagne, de Corato et Sommatino en Italie.
-<img src="sorties/ALLEMAGNE2.jpeg" width="60%" style="display: block; margin: auto;" /><img src="sorties/ITALIE2.jpeg" width="60%" style="display: block; margin: auto;" /><img src="sorties/herne.jpg" width="60%" style="display: block; margin: auto;" /><img src="sorties/sommatino.jpg" width="60%" style="display: block; margin: auto;" /><img src="sorties/corato.jpg" width="60%" style="display: block; margin: auto;" />
 
 ### Italiens d’Isère et Westphaliens du Nord-Pas-de-Calais
 
@@ -128,5 +127,5 @@ induire un biais. A l’oeil nu, on voit ainsi se dessiner sur la carte
 l’ancienne frontière occidentale du pays, lorsque des villes commme
 Szczeczin (Stettin), Głogów (Glogau) et Wrocław (Breslau) étaient
 allemandes.
-
-<img src="sorties/POLOGNE2.jpeg" width="60%" style="display: block; margin: auto;" />
+![pologne_pays](https://github.com/RL31/Migrations-vers-la-France/blob/1d55b214855cef0ec617f5ede9769e478c06e0ac/sorties/frontieres_polonaises.jpeg)
+![pologne_chronologie](https://github.com/RL31/Migrations-vers-la-France/blob/1d55b214855cef0ec617f5ede9769e478c06e0ac/sorties/evolution_pologne.jpeg)
