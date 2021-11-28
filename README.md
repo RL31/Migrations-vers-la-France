@@ -132,7 +132,7 @@ Szczeczin (Stettin), Głogów (Glogau) et Wrocław (Breslau) étaient
 allemandes.
 
 En modifiant l'attribut "pays" avant le géocodage on parvient alors à "récupérer"
-d'autres villes de naissance, sur les anciens territoires polonais à l'est, sur les futurs territoires polonais à l'ouest.
+d'autres villes de naissance, sur les anciens territoires polonais à l'est, sur les nouveaux territoires polonais à l'ouest.
 
 ![pologne_pays](https://github.com/RL31/Migrations-vers-la-France/blob/1d55b214855cef0ec617f5ede9769e478c06e0ac/sorties/frontieres_polonaises.jpeg)
 ![pologne_chronologie](https://github.com/RL31/Migrations-vers-la-France/blob/1d55b214855cef0ec617f5ede9769e478c06e0ac/sorties/evolution_pologne.jpeg)
