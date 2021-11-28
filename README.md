@@ -97,7 +97,7 @@ pourtant le constat est identique : 66 % des nés en Suisse et 85 % des
 nés au Luxembourg sont originaires d’une commune à moins de 25 km de la
 frontière (soit, respectivement, 19 % et 42 % du territoire).
 
-[graph proximité]
+![proximité](https://github.com/RL31/Migrations-vers-la-France/blob/0e87133e02b1907896add964c57f8dafa9228ad0/sorties/waffle_distance.jpeg)
 
 ### Quitter les grandes villes
 
@@ -116,6 +116,8 @@ en Allemagne, de Corato et Sommatino en Italie.
 <img src="sorties/ALLEMAGNE2.jpeg" width="60%" style="display: block; margin: auto;" /><img src="sorties/ITALIE2.jpeg" width="60%" style="display: block; margin: auto;" /><img src="sorties/herne.jpg" width="60%" style="display: block; margin: auto;" /><img src="sorties/sommatino.jpg" width="60%" style="display: block; margin: auto;" /><img src="sorties/corato.jpg" width="60%" style="display: block; margin: auto;" />
 
 ### Italiens d’Isère et Westphaliens du Nord-Pas-de-Calais
+
+![flux](https://github.com/RL31/Migrations-vers-la-France/blob/0e87133e02b1907896add964c57f8dafa9228ad0/sorties/montage_flux.jpg)
 
 Migrations polonaises : les frontières comme limites
 ====================================================
