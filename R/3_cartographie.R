@@ -163,6 +163,9 @@ carte_pays2("ALLEMAGNE")
 carte_pays2("ITALIE")
 carte_pays2("ALGERIE")
 
+carte_pays2("ROUMANIE")
+carte_pays2("AUTRICHE")
+carte_pays2("HONGRIE")
 
 
 
