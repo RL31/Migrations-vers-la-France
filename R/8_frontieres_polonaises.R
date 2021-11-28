@@ -89,40 +89,9 @@ lien_id <- read.csv("donnees/libelle_pays.csv")
 
 limites <- fond %>% filter(CNTR_ID %in% c("PL","CZ","LT")) %>% st_bbox() #BY
 
-# liste_pays <- c("ISLANDE","ESPAGNE","SUISSE","TURQUIE","HONGRIE","GRECE","PORTUGAL",
-#                 "POLOGNE","ALLEMAGNE","ITALIE","BELGIQUE","AUTRICHE",
-#                 "ROUMANIE","RUSSIE","LUXEMBOURG","BULGARIE",
-#                 "SERBIE","ARMENIE","SLOVAQUIE","DANEMARK","IRLANDE","SUEDE","LETTONIE","NORVEGE",
-#                 "FINLANDE","MONTENEGRO","ALBANIE",
-#                 "UKRAINE","CROATIE","LITUANIE","ANDORRE","MACEDOINE","CHYPRE","ESTONIE","MOLDAVIE",
-#                 "MALTE","SLOVENIE","KOSOVO", "SAINTMARIN","BOSNIEHERZEGOVINE","ROYAUMEUNI","PAYSBAS",
-#                 "REPUBLIQUETCHEQUE","BIELORUSSIE","ALGERIE","TUNISIE","MAROC"
-# )
-# 
-# europe <- function(PAYS){
-#   print(PAYS)
-#   base_pays <- readRDS(paste0("donnees/osm_",PAYS,"2.RDS")) %>% 
-#     filter(!is.na(display_name)) %>% 
-#     count(long,lat,display_name,PAYSOK,COMMOK,wt=n) %>% 
-#     st_as_sf(coords=c("long","lat"),crs=4326) %>% 
-#     st_transform(2180) %>% 
-#     mutate(y=unlist(map(.$geometry,2)),
-#            x=unlist(map(.$geometry,1)),
-#            PAYSOK=PAYS) #%>% 
-#   #select(x,y,n,PAYSOK,display_name)
-# }
-# base_complete <- map_dfr(liste_pays,europe)
-
-# donnees_carte_pologne  %>% 
-#   st_drop_geometry()%>% 
-#   as.data.frame() %>%
-#   count(type)
-
 
 ggplot()+
   geom_sf(data=fond,colour="gray80",fill="gray99")+#,fill="gray80"
-  # geom_point(data=base_complete  %>% st_drop_geometry()%>% as.data.frame() %>% arrange(desc(n)) %>% filter(PAYSOK!="POLOGNE"),
-  #            aes(x=x,y=y,size=n),color="gray60",alpha=.5)+
   geom_point(data=donnees_carte_pologne  %>% 
                st_drop_geometry()%>%
                as.data.frame() %>%
@@ -199,14 +168,6 @@ ggsave(file = "sorties/frontieres_polonaises.jpeg",
 
 ggplot()+
   geom_sf(data=fond,colour="gray80",fill="gray99")+#,fill="gray80"
-  # geom_point(data=base_complete  %>% st_drop_geometry()%>% as.data.frame() %>% arrange(desc(n)) %>% filter(PAYSOK!="POLOGNE"),
-  #            aes(x=x,y=y,size=n),color="gray60",alpha=.5)+
-  # geom_point(data=donnees_carte_pologne  %>% 
-  #              st_drop_geometry()%>%
-  #              as.data.frame() %>%
-  #              arrange(desc(n)) %>%
-  #              filter(PAYSOK=="POLOGNE") ,
-  #            aes(x=x,y=y,size=n,color=periodes),alpha=.8)+
   geom_point(data=donnees_carte_pologne  %>% 
                st_drop_geometry()%>% 
                as.data.frame() %>% 
@@ -223,13 +184,6 @@ ggplot()+
                vjust=-1)+
   facet_wrap(~periodes,labeller = labeller(periodes=c("1"="Avant 1939","2"="Deuxième guerre mondiale","3"="Après 1945")) )+
   scale_fill_manual(name="",values=c("FALSE"="gray95","TRUE"="gray99"))+
-  # scale_color_manual(name="Périodes",
-  #                    labels=c("1"="Avant 1939",
-  #                             "2"="Deuxième guerre mondiale",
-  #                             "3"="Après 1945"),
-  #                    values=c("1"="#800026",
-  #                             "2"="#e31a1c",
-  #                             "3"="#fd8d3c"))+
   scale_size_continuous(name="Effectifs",
                         range = c(10*donnees_carte_pologne  %>% st_drop_geometry()%>% as.data.frame() %>%
                                     summarise(min=min(n)) %>% select(min) %>% pull()/
@@ -258,5 +212,3 @@ ggplot()+
                              override.aes =list(size=6)),
          size=guide_legend(title.position = "left",
                            ncol=3,bycol=TRUE))
-
-library(gganimate)  

@@ -20,11 +20,6 @@ FR25 <- FR %>%
 FR200 <- FR %>% 
   st_buffer(dist = 200000)
 
-
-# ggplot()+
-#   geom_sf(data=FR)+
-#   geom_sf(data=FR50,color="red",fill="transparent")
-
 proximite25 <- st_intersection(FR25,base_complete) %>% 
   count(PAYSOK,wt=n) %>% 
   as.data.frame() %>% 
@@ -60,8 +55,6 @@ proximite200 <- st_intersection(FR200,base_complete) %>%
   left_join(base_complete %>%   as.data.frame() %>% count(PAYSOK,wt=n),by="PAYSOK") %>% 
   mutate(pct200=n.x/n.y*100) %>% 
   select(PAYSOK,pct200)
-
-
 
 proximite <- proximite50 %>% 
   left_join(proximite100,by="PAYSOK") %>% 
