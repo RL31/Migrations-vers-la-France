@@ -114,14 +114,18 @@ Petite histoire et grands mouvements
 ### Italiens d’Isère et Westphaliens du Nord-Pas-de-Calais
 
 Lorsqu’on affiche les principales villes de naissance, la
-lecture des cartes révèle quelques surprises. Ainsi, les villes d’Herne
-en Allemagne, de Corato, Sommatino et Città di Castello en Italie
+lecture des cartes révèle quelques surprises en faisant apparaître des communes
+relativement méconnues. Ainsi, les villes de Corato,
+ Sommatino et Città di Castello en Italie ou encore d’Herne en Allemagne.
+
+![italie](https://github.com/RL31/Migrations-vers-la-France/blob/1e18282062826c87d6009a5e02694e2c7e451f47/sorties/ITALIE2.jpeg)
+
+Il est alors intéressant de regarder les destinations en France (c'est-à-dire les lieux de décès). Les cartes ci-dessous
+font alors apparaître des flux très concentrés géographiquement. L'intérêt de ces représentations, et plus largement de ce travail, est d'approcher la petite histoire. Dépasser le discours généraliste sur "les Italiens" pour évoquer précisément l'histoire 
+des habitants de Corato : fuyant la famine, nombre d'entre eux sont venus dans le cadre d'accords gouvernementaux entre l'Italie et la France. Les départs de Sommatino renvoient à la fin de l'exploitation des mines de soufre.
+En Allemagne, le cas de Herne nous fait entrer dans l'histoire mouvementée des [mineurs westphaliens](https://fr.wikipedia.org/wiki/Mineurs_westphaliens).
 
 ![flux](https://github.com/RL31/Migrations-vers-la-France/blob/0e87133e02b1907896add964c57f8dafa9228ad0/sorties/montage_flux.jpg)
-
-L'intérêt de ces représentations, et plus largement de ce travail, est d'approcher la petite histoire. Dépasser le discours généraliste sur "les Italiens" pour évoquer précisément l'histoire 
-des habitants de Corato : fuyant la famine, nombre d'entre eux sont venus dans le cadre d'accords gouvernementaux entre l'Italie et la France. Les départs de Sommatino renvoient à la fin de l'exploitation des mines de soufre.
-Le cas de Herne nous fait entrer dans l'histoire mouvementée des [mineurs westphaliens](https://fr.wikipedia.org/wiki/Mineurs_westphaliens).
 
 Migrations polonaises : les frontières comme limites
 ====================================================
