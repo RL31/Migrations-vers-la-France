@@ -69,7 +69,7 @@ ainsi les grandes lignes de l’histoire de l’immigration en France :
 migrations de proximité, conséquences de la colonisations et mouvements
 très localisés.
 
-Être né quelque part, dans l’espace européen et méditerranéen
+Être né dans l’espace européen et méditerranéen
 =============================================================
 
 ![europe](https://github.com/RL31/Migrations-vers-la-France/blob/7b1fb931b3caa1e3f8ce5e35904de75f6374da4a/sorties/europe.jpg)
